@@ -1,5 +1,16 @@
 IPCS
------
+===
+
+What is IPCS?
+---
+
+IPCS is PHP extension that allows you to create daemons (daemon = background process that is  processing client requests).
+Also IPCS has functions for caching, shared memory or semaphores.
+
+The goal of this project is to call any Drupal (or other framework) function without bootstrap.
+
+Using IPCS
+---
 
 1. Create ipcs extension.
 
@@ -46,4 +57,3 @@ IPCS
 	6. Modify the daemon, but remember to kill and restart the daemon after any change to daemon.php file.
 
 Soon will be added examples for boosting Drupal performance with Nginx SSI and IPCS.
---
