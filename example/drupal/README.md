@@ -1,7 +1,7 @@
 How to use Drupal ajax example
 ===
 
-This example assumes that you already added ipcs.so extension to your php.ini files.
+This example assumes that you already added ipcs.so extension to your php.ini files and compiled ipcs_client.c
 
 1. Create folder `drupal7` in the root of localhost
 2. Download Drupal 7 to drupal7 folder
