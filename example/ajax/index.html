@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>IPCS daemon test</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script>
+			var cacheKey = '';
+			$(document).ready(function(){
+				$('#clear').click(function(){
+					$('#result').html('');
+				});
+				$('#ajax_request_cache').click(function() {
+					cacheKey = $('#params').val().split('\n')[0];
+				});
+				$('input[type="button"]').click(function(){
+					var params = $.trim($('#params').val());
+					if (params.length) {
+						params = params.split('\n');
+					}
+					$.ajax({
+						url: 'ajax_daemon.php',
+						type: 'GET',
+						data: {
+							func: $(this).attr('id'),
+							params: params,
+							cache: cacheKey
+						},
+						success: function(data) {
+							$('#result').prepend(data + '<hr/>');
+						}
+					});	
+					cacheKey = '';
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<blockquote>
+			The daemon name is <b>ajaxtest</b>, use it in manager.php file from client folder to create daemons. Open in your browser http://localhost/ipcs/client/manager.php (assuming that ipcs is the folder you downloaded). 
+			The path to daemon is <i>path/to/ipcs</i><b>/example/ajax/daemon.php</b><br />
+			Remember to kill and start daemon again if you modify the daemon.php file.
+		</blockquote>
+		<hr />
+		<input type="button" id="ajax_request_sum" value="Sum (use n numbers as params)" />
+		<input type="button" id="ajax_request_static" value="Static" />
+		<input type="button" id="ajax_request_class_date" value="Date" />
+		<input type="button" id="ajax_request_repeat" value="Repeat (params: string to repeat, number of repeats)" />
+		<input type="button" id="ajax_request_cache" value="Cache (params: cache key, string to cache, times to repeat the string) - is cached for 5 seconds" />
+		<br />
+		Parameters (use one parameter per line):<br />
+		<textarea id="params" cols="80" rows="5"></textarea>
+		<br />
+		Result <a href="#" id="clear">clear results</a>
+		<hr />
+		<div id="result"></div>
+	</body>
+</html>
