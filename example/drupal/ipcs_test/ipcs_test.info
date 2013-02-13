@@ -1,0 +1,4 @@
+name = IPCS Test
+description = Test IPCS extension
+package = IPCS
+core = 7.x

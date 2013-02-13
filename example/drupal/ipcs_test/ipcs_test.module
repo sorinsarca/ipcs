@@ -1,0 +1,105 @@
+<?php
+
+// Whatever if we are using IPCS.
+define('USING_DAEMON', 0);
+
+// If not in daemon mode.
+define('IPCS_NOT_DAEMON', USING_DAEMON && !defined('IPCS'));
+
+if (USING_DAEMON) {
+  include 'ipcs.php';
+}
+
+/**
+ * Implements hook_menu().
+ */
+function ipcs_test_menu() {
+  $items['ipcs_test/ajax_nodes'] = array(
+    'page callback' => 'ajax_no_ipcs',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_block_info.
+ */
+function ipcs_test_block_info() {
+  $blocks['ipcs_nodes'] = array(
+    'info' => 'Display nodes using ipcs',
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view.
+ */
+function ipcs_test_block_view($delta = NULL) {  
+  switch ($delta) {
+    case 'ipcs_nodes':
+      $count = 3;
+      $path = drupal_get_path('module', 'ipcs_test');
+      
+      $button = array(
+        '#type' => 'button',
+        '#value' => t('Older'),
+        '#id' => 'sidebar_nodes_load',
+      );
+      
+      $js = array(
+        'count' => $count,
+      );
+      
+      global $base_url;
+      if (USING_DAEMON) {
+        $js['ajax_path'] = $path . '/ajax.php';
+      }
+      else {
+      	
+        $js['ajax_path'] = url('ipcs_test/ajax_nodes');
+      }
+      
+      drupal_add_js(array('ipcs_test' => $js), 'setting');
+      drupal_add_js($path . '/ipcs_test.js', 'file');
+      return array(
+        'subject' => t('Latest nodes') . date(' h:i:s'),
+        'content' => '<div id="sidebar_nodes">' . ipcs_test_get_nodes($count, 0, FALSE) . '</div>' .
+                     drupal_render($button),
+      );
+      break;
+  }
+}
+
+
+/**
+ * Returns a rendered list of nodes.
+ */
+function ipcs_test_get_nodes($number, $start = 0, $json = TRUE) {
+  $q = db_select('node', 'n')
+        ->fields('n', array('nid', 'title', 'created'))
+        ->condition('type', 'article')
+        ->orderBy('created', 'DESC')
+        ->range($start, $number)
+        ->execute();
+  $d = date('h:i:s');
+  $list = array();
+  foreach ($q as $node) {
+    $list[] = '<div>' . $d . l($node->title, 'node/' . $node->nid) . ' ' . format_date($node->created, 'long') . '</div>';
+  }
+  $list = $json ? json_encode($list) : implode('', $list);
+  return $list;
+}
+
+/**
+ * Ajax callback if IPCS is disabled.
+ */
+function ajax_no_ipcs() {
+  $start = (int) @$_GET['start'];
+  if ($start < 0) $start = 0;
+  $count = (int) @$_GET['count'];
+  if ($count < 1) $count = 1;
+  $json = ipcs_test_get_nodes($count, $start, TRUE);
+  echo $json;
+  exit;
+}
