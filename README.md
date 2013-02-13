@@ -56,4 +56,4 @@ Using IPCS
 
 	6. Modify the daemon, but remember to kill and restart the daemon after any change to daemon.php file.
 
-Soon will be added examples for boosting Drupal performance with Nginx SSI and IPCS.
+An example of how to use IPCS with Drupal is in `example/drupal` folder.
