@@ -1,7 +1,7 @@
 <?php
 
 // Whatever if we are using IPCS.
-define('USING_DAEMON', 0);
+define('USING_DAEMON', 1);
 
 // If not in daemon mode.
 define('IPCS_NOT_DAEMON', USING_DAEMON && !defined('IPCS'));
